@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c07a749e4a4a5b54c8be9b66f94a0c36, type: 3}
+  m_Name: Level1
+  m_EditorClassIdentifier: 
+  obstacle: 1
+  obstaclerotate: 1
+  obstaclemove: 0
+  height: 20
+  width: 20
+  levelComplete: 1
+  ground: {fileID: 5483863115821736732, guid: 85017406016b22647a05929d7b7d0271, type: 3}
+  player: {fileID: 7934512648624137454, guid: e1eeb1e69235453489292dad51fd0664, type: 3}
+  obstacleprefab: {fileID: 2971352316335653070, guid: 4f24dcde5ab61ec4a9e786a853df0e02, type: 3}
+  x: 2
+  z: 2
+  levelcount: 15

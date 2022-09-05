@@ -8,14 +8,16 @@ public class Obstacle : MonoBehaviour
     private int rotate,positionx=0;
     public int speed;
     public bool positionswitch=false;
+    public Grid grid;
+
     void FixedUpdate()
     {
-        if (SceneManager.GetActiveScene().buildIndex == 3)
+        if (grid.mapinfo.obstaclerotate)
         {
             rotate += 2;
             gameObject.transform.rotation = Quaternion.Euler(new Vector3(0, rotate * Time.deltaTime * speed, 0));
         }
-        if (SceneManager.GetActiveScene().buildIndex == 2)
+        if (grid.mapinfo.obstaclemove)
         {
             if (positionx > 20 && gameObject.transform.position.x>20)
             {

@@ -15,8 +15,17 @@ public class MainMenu : MonoBehaviour
         int levelAt = PlayerPrefs.GetInt("LevelAt",1);
         for (int i = 0; i < lvlbuttons.Length; i++)
         {
-            if (i+1  > levelAt)
+            var i1 = i;
+            lvlbuttons[i].onClick.AddListener(
+                delegate{
+                    StartGame(i1);
+                });
+            if (i + 1 > levelAt)
+            {
                 lvlbuttons[i].interactable = false;
+                lvlbuttons[i].GetComponent<Image>().maskable = false;
+
+            }
         }
     }
     private void Update()
@@ -26,7 +35,13 @@ public class MainMenu : MonoBehaviour
     }
     public void StartGame(int index)
     {
-        SceneManager.LoadScene(index);
+        PlayerPrefs.SetInt("MapList", index);
+        SceneManager.LoadScene("Game");
+    }
+  
+    public void Deneme(int index)
+    {
+        Debug.Log(index);
     }
     public void ExitGame()
     {

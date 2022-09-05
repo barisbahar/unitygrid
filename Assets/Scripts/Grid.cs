@@ -7,41 +7,52 @@ using UnityEngine.UI;
 
 public class Grid : MonoBehaviour
 {
-    Movement movement;
-    public Transform gridPrefab;
-    public Transform cube,obstacle;
     public Node[,] startpos;
     public Node[,] positions;
-    public GameObject Cam;
+    public CreateMap[] maplist;
+    public CreateMap mapinfo;
     public Slider slider;
-    [SerializeField] public int height;
-    [SerializeField] public int width;
+    public GameObject cameraprop;
     private Node[,] nodes;
     public int indexvertical=0,indexhorizontal=0;
     private bool blueplane;
-
+    public Button mainmenubtn;
     private Vector2 starttouchpos;
     private Vector2 currentpos;
     private Vector2 endttouchpos;
     private bool stoptouch = false;
-    public float swiperange;
-    public float taprange;
-    public int direction;
+     float swiperange;
+     float taprange;
+     public int direction;
 
+    private void Awake()
+    {
+        if (PlayerPrefs.GetInt("MapList") < maplist.Length)
+            mapinfo = maplist[PlayerPrefs.GetInt("MapList", 0)];
+        else
+            SceneManager.LoadScene("MainMenu");
+    }
     private void Start()
     {
         CreateGrid();
-        Transform cubeprefab=Instantiate(cube,new Vector3(nodes[0, 0].cellPosition.x, 0.3f, nodes[0, 0].cellPosition.z), Quaternion.identity);
-        if(SceneManager.GetActiveScene().buildIndex>1)
-        Instantiate(obstacle,obstacle.gameObject.transform.position, Quaternion.identity);
+        Transform cubeprefab=Instantiate(mapinfo.player,new Vector3(nodes[0, 0].cellPosition.x, 0.3f, nodes[0, 0].cellPosition.z), Quaternion.identity);
+        if (mapinfo.obstacle == true)
+        {
+            Transform obstacleprefab = Instantiate(mapinfo.obstacleprefab, new Vector3(nodes[mapinfo.x,mapinfo.z].cellPosition.x,0.3f,nodes[mapinfo.x,mapinfo.z].cellPosition.z), Quaternion.identity);
+        obstacleprefab.gameObject.GetComponent<Obstacle>().grid = this;
+        }
         cubeprefab.gameObject.GetComponent<Movement>().grid = this;
-        Cam.GetComponent<CinemachineVirtualCamera>().LookAt = cubeprefab;
-        Cam.GetComponent<CinemachineVirtualCamera>().Follow = cubeprefab;
+        slider = GameObject.FindGameObjectWithTag("Slider").GetComponent<Slider>();
+        cameraprop = GameObject.FindGameObjectWithTag("CameraProperties");
+        cameraprop.GetComponent<CinemachineVirtualCamera>().LookAt = cubeprefab;
+        cameraprop.GetComponent<CinemachineVirtualCamera>().Follow = cubeprefab;
         startpos = nodes;
         startpos[indexhorizontal, indexvertical].obj.GetComponent<MeshRenderer>().material.color = Color.blue;
         startpos[indexhorizontal, indexvertical].paintindex=1;
-        slider.maxValue = height *width;
-        gameObject.GetComponent<AudioSource>().volume = PlayerPrefs.GetFloat("volume");        
+        slider.maxValue = mapinfo.height*mapinfo.width;
+        gameObject.GetComponent<AudioSource>().volume = PlayerPrefs.GetFloat("volume");
+        mainmenubtn = GameObject.FindGameObjectWithTag("MainMenuBtn").GetComponent<Button>();
+        mainmenubtn.onClick.AddListener(MainMenuBtn);
     }
     private void Update()
     {
@@ -50,14 +61,14 @@ public class Grid : MonoBehaviour
     }
     private void CreateGrid()
     {
-        nodes = new Node[width, height];
+        nodes = new Node[mapinfo.width, mapinfo.height];
         var name = 0;
-        for(int i=0;i<width;i++)
+        for(int i=0;i<mapinfo.width;i++)
         {
-            for(int j = 0; j < height; j++)
+            for(int j = 0; j < mapinfo.height; j++)
             {
                 Vector3 worldPosition = new Vector3(x: i, y: 0, z: j);
-                Transform obj = Instantiate(gridPrefab, worldPosition, Quaternion.identity);
+                Transform obj = Instantiate(mapinfo.ground, worldPosition, Quaternion.identity);
                 obj.name = "Cell" + name;
                 nodes[i, j] = new Node(isPlaceable: true, worldPosition, obj,0,false);
                 name++;
@@ -123,6 +134,10 @@ public class Grid : MonoBehaviour
             }
         }
     }
+    public void MainMenuBtn()
+    {
+        SceneManager.LoadScene("MainMenu");
+    }
 }
 
 public class Node
@@ -144,4 +159,5 @@ public class Node
     {
         
     }
+    
 }

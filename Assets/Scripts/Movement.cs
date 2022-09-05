@@ -13,24 +13,19 @@ public class Movement : MonoBehaviour
     public Grid grid;
     public int redCount;
     public float x, z;
-    public float levelcount;
     public int nextsceneload;
+    private int levelindex;
 
     private void Start()
     {
-        nextsceneload = SceneManager.GetActiveScene().buildIndex+1;
-        if (SceneManager.GetActiveScene().buildIndex == 1)
+        for (int i = 0; i < grid.maplist.Length; i++)
         {
-            levelcount = 0.9f;
+            if (grid.mapinfo == grid.maplist[i])
+            {
+                levelindex = i;
+            }
         }
-        else if (SceneManager.GetActiveScene().buildIndex == 2)
-        {
-            levelcount = 0.7f;
-        }
-        else if (SceneManager.GetActiveScene().buildIndex == 3)
-        {
-            levelcount = 0.4f;
-        }
+        nextsceneload = levelindex + 2;
     }
 
     private void Update()
@@ -47,7 +42,7 @@ public class Movement : MonoBehaviour
             }
 
         }
-        if ((Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow)|| grid.direction==1) && ismoving == false && grid.startpos[grid.indexhorizontal, grid.indexvertical].cellPosition.x < grid.height - 1)
+        if ((Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow)|| grid.direction==1) && ismoving == false && grid.startpos[grid.indexhorizontal, grid.indexvertical].cellPosition.x < grid.mapinfo.height - 1)
         {
             if (grid.startpos[grid.indexhorizontal+1, grid.indexvertical].drop == false)
             {
@@ -58,7 +53,7 @@ public class Movement : MonoBehaviour
             }
 
         }
-        if ((Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow)||grid.direction==2) && ismoving == false && grid.startpos[grid.indexhorizontal, grid.indexvertical].cellPosition.z < grid.width - 1)
+        if ((Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow)||grid.direction==2) && ismoving == false && grid.startpos[grid.indexhorizontal, grid.indexvertical].cellPosition.z < grid.mapinfo.width - 1)
         {
             if (grid.startpos[grid.indexhorizontal, grid.indexvertical+1].drop == false)
             {
@@ -80,9 +75,14 @@ public class Movement : MonoBehaviour
             }
 
         }
-        if (grid.slider.value >=grid.slider.maxValue * levelcount)
+        if (grid.slider.value >= grid.mapinfo.levelcount)   
         {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex+1);
+            if (grid.mapinfo.levelComplete ==0)
+            {
+                grid.mapinfo.levelComplete = 1;
+                PlayerPrefs.SetInt("MapList", PlayerPrefs.GetInt("MapList") + 1);
+            }
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
             if (nextsceneload > PlayerPrefs.GetInt("LevelAt"))
             {
                 PlayerPrefs.SetInt("LevelAt", nextsceneload);
@@ -170,7 +170,7 @@ public class Movement : MonoBehaviour
     public void CheckPaint(int horizontal, int vertical)
     {
 
-        if (horizontal < 0 || horizontal > grid.width - 1 || vertical < 0 || vertical > grid.height - 1)
+        if (horizontal < 0 || horizontal > grid.mapinfo.width - 1 || vertical < 0 || vertical > grid.mapinfo.height - 1)
         {
             return;
         }
@@ -199,4 +199,5 @@ public class Movement : MonoBehaviour
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
     }
+
 }
